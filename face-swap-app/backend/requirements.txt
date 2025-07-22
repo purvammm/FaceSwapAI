@@ -1,0 +1,24 @@
+# This file is auto-generated from the faceswap setup.py file
+# It contains the dependencies for the CPU version of faceswap
+# and the base dependencies.
+
+# Base dependencies
+numpy
+scipy
+pillow
+tqdm
+requests
+h5py
+imageio
+imageio-ffmpeg
+ffmpy
+fastcluster
+dlib
+opencv-python
+# CPU dependencies
+tensorflow-cpu
+# GUI dependencies
+tk
+# Other dependencies
+flask
+werkzeug

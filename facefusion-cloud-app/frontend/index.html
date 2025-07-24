@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Face Swap</title>
+    <title>FaceFusion Cloud</title>
     <style>
         #loader {
             border: 16px solid #f3f3f3;
@@ -27,7 +27,7 @@
     </style>
 </head>
 <body>
-    <h1>Face Swap</h1>
+    <h1>FaceFusion Cloud</h1>
     <form id="upload-form">
         <label for="video">Video:</label>
         <input type="file" name="video" id="video" accept="video/*" required>
@@ -35,17 +35,19 @@
         <label for="image">Image:</label>
         <input type="file" name="image" id="image" accept="image/*" required>
         <br>
-        <button type="submit">Swap Face</button>
+        <button type="submit">Upload and Process</button>
     </form>
     <div id="loader"></div>
+    <div id="status"></div>
     <div id="result-container" style="display: none;">
-        <h2>Result</h2>
+        <h2>Processed Video</h2>
         <video id="result-video" controls></video>
     </div>
 
     <script>
         const form = document.getElementById("upload-form");
         const loader = document.getElementById("loader");
+        const status = document.getElementById("status");
         const resultContainer = document.getElementById("result-container");
         const resultVideo = document.getElementById("result-video");
 
@@ -53,24 +55,33 @@
             event.preventDefault();
 
             loader.style.display = "block";
+            status.textContent = "";
             resultContainer.style.display = "none";
 
             const formData = new FormData(form);
-            const response = await fetch("/api/swap", {
+            const response = await fetch("/api/upload", {
                 method: "POST",
                 body: formData,
             });
 
             loader.style.display = "none";
+            const data = await response.json();
 
             if (response.ok) {
-                const blob = await response.blob();
-                const url = URL.createObjectURL(blob);
-                resultVideo.src = url;
+                status.textContent = data.message;
+                // In a real application, you would poll a /api/status endpoint
+                // to check the progress of the processing job.
+                // Once the job is complete, you would get the processed video URL
+                // and display it.
+                // For this example, we'll just show a message.
+                // To simulate a result, you could uncomment the following lines
+                // and replace the URL with a real video URL.
+                /*
+                resultVideo.src = "URL_TO_YOUR_PROCESSED_VIDEO";
                 resultContainer.style.display = "block";
+                */
             } else {
-                const error = await response.json();
-                alert(`Error: ${error.error}`);
+                status.textContent = `Error: ${data.error}`;
             }
         });
     </script>

@@ -69,21 +69,29 @@
 
             if (response.ok) {
                 status.textContent = data.message;
-                // In a real application, you would poll a /api/status endpoint
-                // to check the progress of the processing job.
-                // Once the job is complete, you would get the processed video URL
-                // and display it.
-                // For this example, we'll just show a message.
-                // To simulate a result, you could uncomment the following lines
-                // and replace the URL with a real video URL.
-                /*
-                resultVideo.src = "URL_TO_YOUR_PROCESSED_VIDEO";
-                resultContainer.style.display = "block";
-                */
+                const videoKey = data.video_key;
+                pollStatus(videoKey);
             } else {
                 status.textContent = `Error: ${data.error}`;
             }
         });
+
+        async function pollStatus(videoKey) {
+            const interval = setInterval(async () => {
+                const response = await fetch(`/api/status/${videoKey}`);
+                const data = await response.json();
+
+                if (data.status === "complete") {
+                    clearInterval(interval);
+                    loader.style.display = "none";
+                    status.textContent = "Processing complete!";
+                    resultVideo.src = data.url;
+                    resultContainer.style.display = "block";
+                } else {
+                    status.textContent = "Processing...";
+                }
+            }, 5000); // Poll every 5 seconds
+        }
     </script>
 </body>
 </html>
